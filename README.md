@@ -5,7 +5,7 @@ This is a language interpretation and recognition interface (LIRI) app.  The ass
 
 The else if (searchName.length < 1)) statement is the one I had to add in order to add in defaults for an empty search.
 
-'''
+```Javascript
 function checkName() {
     if (searchName === "") {
 	if (searchType === "spotify-this-song"){
@@ -29,7 +29,7 @@ function checkName() {
 	    movieSearch();
 	}
     }
-'''
+```
 
 ## Technologies Used
 * Javascript
