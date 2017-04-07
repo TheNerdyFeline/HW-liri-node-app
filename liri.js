@@ -7,7 +7,7 @@ var request = require("request");
 
 // declare var for getting user data
 var searchType = process.argv[2];
-var name = process.argv[3] || "";
+var searchName = process.argv[3] || "";
 
 // grab key for twitter and store in keys var
 var keyList = keys.twitterKeys;
@@ -50,16 +50,22 @@ function myTweets() {
 
 // spotify check for song function
 function checkName() {
-    if (name === "") {
+    if (searchName === "") {
 	if (searchType === "spotify-this-song"){
-	    name = "The Sign";
+	    searchName = "Bye Bye Bye";
 	    spotifySearch();
 	} else {
 	    console.log("If you haven't watched 'Mr. Nobody,' then you should: http://www.imdb.com/title/tt0485947/");
 	    console.log("It's on Netflix!");
 	}
+    } else if (searchName.length > 1) {
+	if(searchType === "spotify-this-song") {
+	    spotifySearch();
+	} else {
+	    movieSearch();
+	}
     } else {
-	name = process.argv[3];
+	searchName = process.argv[3];
 	if(searchType === "spotify-this-song") {
 	    spotifySearch();
 	} else {
@@ -71,18 +77,18 @@ function checkName() {
 
 // create spotify callback function
 function spotifySearch() {
-    spotify.search({ type: 'track', query: name }, function(err, data) {
+    spotify.search({ type: 'track', query: searchName }, function(err, data) {
 	if ( err ) {
             console.log('Error occurred: ' + err);
             return;
 	} else {
-	    console.log(data.tracks.items[0].artists);
+	    console.log(JSON.stringify(data.tracks.items[0].artists, null, 2));
 	    //artists
-	    console.log("Artitst(s): " + data.tracks.items[0].artists.name);
+	    console.log("Artitst(s): " + data.tracks.items[0].artists[0].name);
 	    // song name
 	    console.log("Song Name: " + data.tracks.items[0].name);
 	    // spotify link
-	    console.log("Spotify Link " + data.tracks.items[0].href);
+	    console.log("Spotify Link: " + data.tracks.items[0].href);
 	    // album
 	    console.log("Album: " + data.tracks.items[0].album.name);
 	}
@@ -91,7 +97,7 @@ function spotifySearch() {
 
 // create omdb request function
 function movieSearch() {
-    var encodeName = encodeURI(name);
+    var encodeName = encodeURI(searchName);
     request("http://www.omdbapi.com/?t=" + encodeName + "&y=&plot=short&r=json", function(error, response, body) {
 	if (!error && response.statusCode === 200) {
 	    //console.log(JSON.parse(body));
@@ -125,7 +131,8 @@ function randomSearch() {
 	    console.log(error);
 	} else {
 	    var randArr = data.split(",");
-	    name = randArr[1];
+	    console.log(randArr);
+	    searchName = randArr[1];
 	    searchType = randArr[0];
 	    searchCheck();
 	}
